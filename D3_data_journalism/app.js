@@ -20,3 +20,9 @@ var svg = d3.select("#scatter")
 
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+//Import data
+d3.csv("data.csv").then(function(censusData) {
+
+    console.log(censusData);
+})
