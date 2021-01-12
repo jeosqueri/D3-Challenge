@@ -64,4 +64,21 @@ d3.csv("data.csv").then(function(censusData) {
         .attr("fill", "pink")
         .attr("opacity", ".5");
 
-})
+    // Create axes labels
+    //Y Axis
+    chartGroup.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left + 40)
+      .attr("x", 0 - (height / 2))
+      .attr("dy", "1em")
+      .attr("class", "axisText")
+      .text("Smoking");
+    //X axis
+    chartGroup.append("text")
+      .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
+      .attr("class", "axisText")
+      .text("Poverty");
+
+}).catch(function(error) {
+    console.log(error);
+  });
