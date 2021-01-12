@@ -34,11 +34,11 @@ d3.csv("data.csv").then(function(censusData) {
 
     //Step 2: Create scale functions
     var xAxis = d3.scaleLinear()
-      .domain([0, d3.max(censusData, d => d.poverty)])
+      .domain(d3.extent(censusData, d => d.poverty))
       .range([0, width]);
 
     var yAxis = d3.scaleLinear()
-      .domain([0, d3.max(censusData, d => d.smokes)])
+      .domain([4, d3.max(censusData, d => d.smokes)])
       .range([height, 0]);
 
     // Step 3: Create axis functions
@@ -53,7 +53,7 @@ d3.csv("data.csv").then(function(censusData) {
     chartGroup.append("g")
       .call(leftAxis);
 
-    // Steo 5: Create cirles
+    // Step 5: Create cirles
     var circlesGroup = chartGroup.selectAll("circle")
         .data(censusData)
         .enter()
@@ -61,8 +61,25 @@ d3.csv("data.csv").then(function(censusData) {
         .attr("cx", d => xAxis(d.poverty))
         .attr("cy", d => yAxis(d.smokes))
         .attr("r", "15")
-        .attr("fill", "pink")
+        .attr("fill", "blue")
         .attr("opacity", ".5");
+    //Add circle labels
+    var circleLabels = chartGroup.selectAll(null).data(censusData).enter().append("text");
+
+    circleLabels
+        .attr("x", function(d) {
+            return xAxis(d.poverty);
+          })
+        .attr("y", function(d) {
+            return yAxis(d.smokes);
+          })
+        .text(function(d) {
+            return d.abbr;
+          })
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "10px")
+        .attr("text-anchor", "middle")
+        .attr("fill", "white")
 
     // Create axes labels
     //Y Axis
@@ -72,12 +89,12 @@ d3.csv("data.csv").then(function(censusData) {
       .attr("x", 0 - (height / 2))
       .attr("dy", "1em")
       .attr("class", "axisText")
-      .text("Smoking");
+      .text("Smoking (%)");
     //X axis
     chartGroup.append("text")
       .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
       .attr("class", "axisText")
-      .text("Poverty");
+      .text("Poverty (%)");
 
 }).catch(function(error) {
     console.log(error);
