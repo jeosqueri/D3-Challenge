@@ -52,4 +52,16 @@ d3.csv("data.csv").then(function(censusData) {
 
     chartGroup.append("g")
       .call(leftAxis);
+
+    // Steo 5: Create cirles
+    var circlesGroup = chartGroup.selectAll("circle")
+        .data(censusData)
+        .enter()
+        .append("circle")
+        .attr("cx", d => xAxis(d.poverty))
+        .attr("cy", d => yAxis(d.smokes))
+        .attr("r", "15")
+        .attr("fill", "pink")
+        .attr("opacity", ".5");
+
 })
