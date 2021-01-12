@@ -25,4 +25,31 @@ var chartGroup = svg.append("g")
 d3.csv("data.csv").then(function(censusData) {
 
     console.log(censusData);
+
+    //Step 1: Parse data/cast as numbers
+    censusData.forEach(function(data) {
+        data.poverty = +data.poverty;
+        data.smokes = +data.smokes;
+    });
+
+    //Step 2: Create scale functions
+    var xAxis = d3.scaleLinear()
+      .domain([0, d3.max(censusData, d => d.poverty)])
+      .range([0, width]);
+
+    var yAxis = d3.scaleLinear()
+      .domain([0, d3.max(censusData, d => d.smokes)])
+      .range([height, 0]);
+
+    // Step 3: Create axis functions
+    var bottomAxis = d3.axisBottom(xAxis);
+    var leftAxis = d3.axisLeft(yAxis);
+
+    // Step 4: Append Axes to the chart
+    chartGroup.append("g")
+      .attr("transform", `translate(0, ${height})`)
+      .call(bottomAxis);
+
+    chartGroup.append("g")
+      .call(leftAxis);
 })
