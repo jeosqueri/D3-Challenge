@@ -105,9 +105,10 @@ d3.csv("data.csv").then(function(censusData) {
     });
 
     //Step 2: Create scale functions
-    var xLinearScale = d3.scaleLinear()
-      .domain(d3.extent(censusData, d => d.poverty))
-      .range([0, width]);
+    // var xLinearScale = d3.scaleLinear()
+    //   .domain(d3.extent(censusData, d => d.poverty))
+    //   .range([0, width]);
+    var xLinearScale = xScale(censusData, chosenXAxis);
 
     var yLinearScale = d3.scaleLinear()
       .domain([4, d3.max(censusData, d => d.smokes)])
@@ -118,10 +119,10 @@ d3.csv("data.csv").then(function(censusData) {
     var leftAxis = d3.axisLeft(yLinearScale);
 
     // Step 4: Append Axes to the chart
-    chartGroup.append("g")
+    var xAxis = chartGroup.append("g")
       .attr("transform", `translate(0, ${height})`)
       .call(bottomAxis);
-
+    //yAxis
     chartGroup.append("g")
       .call(leftAxis);
 
@@ -130,17 +131,18 @@ d3.csv("data.csv").then(function(censusData) {
         .data(censusData)
         .enter()
         .append("circle")
-        .attr("cx", d => xLinearScale(d.poverty))
+        .attr("cx", d => xLinearScale(d[chosenXAxis]))
         .attr("cy", d => yLinearScale(d.smokes))
         .attr("r", "15")
         .attr("fill", "blue")
         .attr("opacity", ".5");
+
     //Add circle labels
     var circleLabels = chartGroup.selectAll(null).data(censusData).enter().append("text");
 
     circleLabels
         .attr("x", function(d) {
-            return xLinearScale(d.poverty);
+            return xLinearScale(d[chosenXAxis]);
           })
         .attr("y", function(d) {
             return yLinearScale(d.smokes);
@@ -153,7 +155,24 @@ d3.csv("data.csv").then(function(censusData) {
         .attr("text-anchor", "middle")
         .attr("fill", "white")
 
-    // Create axes labels
+    // Create group for two x-axis labels
+    var labelsGroup = chartGroup.append("g")
+      .attr("transform", `translate(${width / 2}, ${height + 20})`);
+
+    var povertyLabel = labelsGroup.append("text")
+      .attr("x", 0)
+      .attr("y", 20)
+      .attr("value", "poverty") // value to grab for event listener
+      .classed("active", true)
+      .text("Poverty %");
+
+    var ageLabel = labelsGroup.append("text")
+      .attr("x", 0)
+      .attr("y", 40)
+      .attr("value", "age") // value to grab for event listener
+      .classed("inactive", true)
+      .text("Age");
+
     //Y Axis
     chartGroup.append("text")
       .attr("transform", "rotate(-90)")
@@ -162,11 +181,86 @@ d3.csv("data.csv").then(function(censusData) {
       .attr("dy", "1em")
       .attr("class", "axisText")
       .text("Smoking (%)");
-    //X axis
-    chartGroup.append("text")
-      .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
-      .attr("class", "axisText")
-      .text("Poverty (%)");
+
+    // updateToolTip function above csv import
+    var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+
+    // x axis labels event listener
+    labelsGroup.selectAll("text")
+      .on("click", function() {
+      // get value of selection
+      var value = d3.select(this).attr("value");
+      if (value !== chosenXAxis) {
+
+        // replaces chosenXAxis with value
+        chosenXAxis = value;
+
+        // console.log(chosenXAxis)
+
+        // functions here found above csv import
+        // updates x scale for new data
+        xLinearScale = xScale(censusData, chosenXAxis);
+
+        // updates x axis with transition
+        xAxis = renderAxes(xLinearScale, xAxis);
+
+        // updates circles with new x values
+        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+
+        // updates tooltips with new info
+        circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+
+        // changes classes to change bold text
+        if (chosenXAxis === "poverty") {
+          povertyLabel
+            .classed("active", true)
+            .classed("inactive", false);
+          ageLabel
+            .classed("active", false)
+            .classed("inactive", true);
+        }
+        else {
+          povertyLabel
+            .classed("active", false)
+            .classed("inactive", true);
+          ageLabel
+            .classed("active", true)
+            .classed("inactive", false);
+        }
+    }
+  });
+    //Add circle labels
+    // var circleLabels = chartGroup.selectAll(null).data(censusData).enter().append("text");
+
+    // circleLabels
+    //     .attr("x", function(d) {
+    //         return xLinearScale(d.poverty);
+    //       })
+    //     .attr("y", function(d) {
+    //         return yLinearScale(d.smokes);
+    //       })
+    //     .text(function(d) {
+    //         return d.abbr;
+    //       })
+    //     .attr("font-family", "sans-serif")
+    //     .attr("font-size", "10px")
+    //     .attr("text-anchor", "middle")
+    //     .attr("fill", "white")
+
+    // Create axes labels
+    //Y Axis
+    // chartGroup.append("text")
+    //   .attr("transform", "rotate(-90)")
+    //   .attr("y", 0 - margin.left + 40)
+    //   .attr("x", 0 - (height / 2))
+    //   .attr("dy", "1em")
+    //   .attr("class", "axisText")
+    //   .text("Smoking (%)");
+    // //X axis
+    // chartGroup.append("text")
+    //   .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
+    //   .attr("class", "axisText")
+    //   .text("Poverty (%)");
 
 }).catch(function(error) {
     console.log(error);
