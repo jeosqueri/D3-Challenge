@@ -33,17 +33,17 @@ d3.csv("data.csv").then(function(censusData) {
     });
 
     //Step 2: Create scale functions
-    var xAxis = d3.scaleLinear()
+    var xLinearScale = d3.scaleLinear()
       .domain(d3.extent(censusData, d => d.poverty))
       .range([0, width]);
 
-    var yAxis = d3.scaleLinear()
+    var yLinearScale = d3.scaleLinear()
       .domain([4, d3.max(censusData, d => d.smokes)])
       .range([height, 0]);
 
     // Step 3: Create axis functions
-    var bottomAxis = d3.axisBottom(xAxis);
-    var leftAxis = d3.axisLeft(yAxis);
+    var bottomAxis = d3.axisBottom(xLinearScale);
+    var leftAxis = d3.axisLeft(yLinearScale);
 
     // Step 4: Append Axes to the chart
     chartGroup.append("g")
@@ -58,8 +58,8 @@ d3.csv("data.csv").then(function(censusData) {
         .data(censusData)
         .enter()
         .append("circle")
-        .attr("cx", d => xAxis(d.poverty))
-        .attr("cy", d => yAxis(d.smokes))
+        .attr("cx", d => xLinearScale(d.poverty))
+        .attr("cy", d => yLinearScale(d.smokes))
         .attr("r", "15")
         .attr("fill", "blue")
         .attr("opacity", ".5");
@@ -68,10 +68,10 @@ d3.csv("data.csv").then(function(censusData) {
 
     circleLabels
         .attr("x", function(d) {
-            return xAxis(d.poverty);
+            return xLinearScale(d.poverty);
           })
         .attr("y", function(d) {
-            return yAxis(d.smokes);
+            return yLinearScale(d.smokes);
           })
         .text(function(d) {
             return d.abbr;
