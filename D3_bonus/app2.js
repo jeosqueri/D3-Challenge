@@ -83,6 +83,18 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis) {
   return circlesGroup;
 }
 
+// function renderCirclesLabel(circlesLabel, newXScale, chosenXAxis) {
+
+//   circlesLabel.transition()
+//     .duration(1000)
+//     .attr("cx", d => newXScale(d[chosenXAxis]))
+//     .text(function(d) {
+//       return d.abbr;
+//     });
+
+//   return circlesLabel;
+// }
+
 function renderCirclesY(circlesGroup, newYScale, chosenYAxis) {
 
   circlesGroup.transition()
@@ -151,6 +163,7 @@ d3.csv("data.csv").then(function(censusData) {
         data.income = +data.income;
         data.smokes = +data.smokes;
         data.obesity = +data.obesity;
+        data.healthcare = +data.healthcare;
     });
 
     //Step 2: Create scale functions
@@ -256,6 +269,14 @@ d3.csv("data.csv").then(function(censusData) {
       .attr("value","obesity")
       .attr("inactive", true)
       .text("Obesity (%)")
+
+    var healthcareLabel = labelsGroupY.append("text")
+      .attr("y", 0 - margin.left + 0)
+      .attr("x", 0 - (height / 2))
+      .attr("dy", "1em")
+      .attr("value","healthcare")
+      .attr("inactive", true)
+      .text("Healthcare")
           
 
     // updateToolTip function above csv import
@@ -282,6 +303,8 @@ d3.csv("data.csv").then(function(censusData) {
 
         // updates circles with new x values
         circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+
+        // circleLabels = renderCirclesLabel(circleLabels, xLinearScale, chosenXAxis);
 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
