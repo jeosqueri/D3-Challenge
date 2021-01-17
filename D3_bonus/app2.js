@@ -61,7 +61,7 @@ function renderAxes(newXScale, xAxis) {
 
   return xAxis;
 }
-
+// function for updating yAxis var upon click on axis label
 function renderAxesY(newYScale, yAxis) {
   var leftAxis = d3.axisLeft(newYScale);
 
@@ -355,7 +355,7 @@ d3.csv("data.csv").then(function(censusData) {
         // replaces chosenYAxis with value
         chosenYAxis = value;
 
-        // console.log(chosenXAxis)
+        console.log(chosenYAxis)
 
         // functions here found above csv import
         // updates Y scale for new data
@@ -382,7 +382,7 @@ d3.csv("data.csv").then(function(censusData) {
             .classed("active", false)
             .classed("inactive", true);
         }
-        else if (chosenXAxis === "obesity") {
+        else if (chosenYAxis === "obesity") {
           smokeLabel
             .classed("active", false)
             .classed("inactive", true);
