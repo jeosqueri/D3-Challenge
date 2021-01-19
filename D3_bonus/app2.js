@@ -135,17 +135,17 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, circlesLabels) {
     labelY = "Smokes (%)";
   }
   else if (chosenYAxis === "obesity") {
-    labelY = "Obesity";
+    labelY = "Obesity (%)";
   }
   else {
-    labelY = "Healthcare";
+    labelY = "Healthcare (%)";
   }
 
   var toolTip = d3.tip()
     .attr("class", "d3-tip")
     .offset([90, -90])
     .html(function(d) {
-      return (`${d.state}<br>${label}: ${d[chosenXAxis]} <br>${labelY}: ${d[chosenYAxis]}`);
+      return (`<b>${d.state}</b><br>${label}: ${d[chosenXAxis]} <br>${labelY}: ${d[chosenYAxis]}`);
     });
 
   circlesGroup.call(toolTip);
@@ -217,7 +217,8 @@ d3.csv("data.csv").then(function(censusData) {
         .attr("cx", d => xLinearScale(d[chosenXAxis]))
         .attr("cy", d => yLinearScale(d[chosenYAxis]))
         .attr("r", "15")
-        .attr("fill", "blue")
+        .classed("stateCircle", true)
+        //.attr("fill", "blue")
         .attr("opacity", ".5");
 
     //Add circle labels (figure out how to update these)
@@ -247,7 +248,7 @@ d3.csv("data.csv").then(function(censusData) {
       .attr("y", 20)
       .attr("value", "poverty") // value to grab for event listener
       .classed("active", true)
-      .text("Poverty %");
+      .text("Poverty (%)");
 
     var ageLabel = labelsGroup.append("text")
       .attr("x", 0)
@@ -279,7 +280,7 @@ d3.csv("data.csv").then(function(censusData) {
       .attr("x", 0 - (height / 2))
       .attr("dy", "1em")
       .attr("value","smokes")
-      .attr("active", true)
+      .classed("active", true)
       .text("Smokes (%)")
 
     var obesityLabel = labelsGroupY.append("text")
@@ -287,7 +288,7 @@ d3.csv("data.csv").then(function(censusData) {
       .attr("x", 0 - (height / 2))
       .attr("dy", "1em")
       .attr("value","obesity")
-      .attr("inactive", true)
+      .classed("inactive", true)
       .text("Obesity (%)")
 
     var healthcareLabel = labelsGroupY.append("text")
@@ -295,8 +296,8 @@ d3.csv("data.csv").then(function(censusData) {
       .attr("x", 0 - (height / 2))
       .attr("dy", "1em")
       .attr("value","healthcare")
-      .attr("inactive", true)
-      .text("Healthcare")
+      .classed("inactive", true)
+      .text("Healthcare (%)")
           
 
     // updateToolTip function above csv import
