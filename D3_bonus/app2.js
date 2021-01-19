@@ -1,4 +1,4 @@
-// @TODO: YOUR CODE HERE!
+// Set width, height, and margins for SVG object
 var svgWidth = 960;
 var svgHeight = 500;
 
@@ -36,9 +36,9 @@ function xScale(censusData, chosenXAxis) {
     .range([0, width]);
 
   return xLinearScale;
-
 }
-//function for yscale
+
+//function for updating y-scale var upon click on axis label
 function yScale(censusData, chosenYAxis) {
   // create scales
   var yLinearScale = d3.scaleLinear()
@@ -48,7 +48,6 @@ function yScale(censusData, chosenYAxis) {
     .range([height, 0]);
 
   return yLinearScale;
-
 }
 
 // function used for updating xAxis var upon click on axis label
@@ -83,27 +82,7 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis, newYScale, chosenYA
 
   return circlesGroup;
 }
-
-// function renderText(textGroup, newXScale, newYScale, chosenXAxis, chosenYAxis) {
-//   textGroup.transition()
-//     .duration(1000)
-//     .attr("x", d => newXScale(d[chosenXAxis]))
-//     .attr("y", d => newYScale(d[chosenYAxis]))
-//     .text(function(d) {
-//       return d.abbr;
-//     });
-// }
-
-
-// function renderCirclesY(circlesGroup, newYScale, chosenYAxis) {
-
-//   circlesGroup.transition()
-//     .duration(1000)
-//     .attr("cy", d => newYScale(d[chosenYAxis]));
-
-//   return circlesGroup;
-// }
-
+//function for updating circle labels
 function renderCirclesLabel(circlesLabels, newXScale, chosenXAxis, newYScale, chosenYAxis) {
 
   circlesLabels.transition()
@@ -187,16 +166,10 @@ d3.csv("data.csv").then(function(censusData) {
     });
 
     //Step 2: Create scale functions
-    // var xLinearScale = d3.scaleLinear()
-    //   .domain(d3.extent(censusData, d => d.poverty))
-    //   .range([0, width]);
     var xLinearScale = xScale(censusData, chosenXAxis);
 
     var yLinearScale = yScale(censusData, chosenYAxis);
-    // var yLinearScale = d3.scaleLinear()
-    //   .domain([4, d3.max(censusData, d => d.smokes)])
-    //   .range([height, 0]);
-
+    
     // Step 3: Create axis functions
     var bottomAxis = d3.axisBottom(xLinearScale);
     var leftAxis = d3.axisLeft(yLinearScale);
@@ -218,10 +191,9 @@ d3.csv("data.csv").then(function(censusData) {
         .attr("cy", d => yLinearScale(d[chosenYAxis]))
         .attr("r", "15")
         .classed("stateCircle", true)
-        //.attr("fill", "blue")
         .attr("opacity", ".5");
 
-    //Add circle labels (figure out how to update these)
+    //Create circle labels variable/add state abb to circles
     var circlesLabels = chartGroup.selectAll(null).data(censusData).enter().append("text");
 
     circlesLabels
@@ -239,7 +211,7 @@ d3.csv("data.csv").then(function(censusData) {
         .attr("text-anchor", "middle")
         .attr("fill", "white")
 
-    // Create group for two x-axis labels
+    // Create group for three x-axis labels
     var labelsGroup = chartGroup.append("g")
       .attr("transform", `translate(${width / 2}, ${height + 20})`);
 
@@ -264,14 +236,7 @@ d3.csv("data.csv").then(function(censusData) {
       .classed("inactive", true)
       .text("Income");
 
-    //Y Axis
-    // chartGroup.append("text")
-    //   .attr("transform", "rotate(-90)")
-    //   .attr("y", 0 - margin.left + 40)
-    //   .attr("x", 0 - (height / 2))
-    //   .attr("dy", "1em")
-    //   .attr("class", "axisText")
-    //   .text("Smoking (%)");
+    // Create group for 3 y-axis labels
     var labelsGroupY = chartGroup.append("g")
           .attr("transform", "rotate(-90)")
 
@@ -313,7 +278,7 @@ d3.csv("data.csv").then(function(censusData) {
         // replaces chosenXAxis with value
         chosenXAxis = value;
 
-        // console.log(chosenXAxis)
+        console.log(chosenXAxis)
 
         // functions here found above csv import
         // updates x scale for new data
@@ -325,9 +290,9 @@ d3.csv("data.csv").then(function(censusData) {
         // updates circles with new x values
         circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
 
-        // circleLabels = renderCirclesLabel(circleLabels, xLinearScale, chosenXAxis);
-        // circlesLabels = renderCirclesLabel(circlesLabels, newXScale, chosenXAxis, newYScale, chosenYAxis);
+        // update circle labels
         circlesLabels = renderCirclesLabel(circlesLabels, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
+
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, circlesLabels);
 
@@ -389,8 +354,9 @@ d3.csv("data.csv").then(function(censusData) {
         // updates circles with new Y values
         circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
 
-        // circlesLabels = renderCirclesLabel(circlesLabels, newXScale, chosenXAxis, newYScale, chosenYAxis);
+        // update circle labels
         circlesLabels = renderCirclesLabel(circlesLabels, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
+
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, circlesLabels);
 
@@ -430,39 +396,6 @@ d3.csv("data.csv").then(function(censusData) {
         }
     }
   });
-    //Add circle labels
-    // var circleLabels = chartGroup.selectAll(null).data(censusData).enter().append("text");
-
-    // circleLabels
-    //     .attr("x", function(d) {
-    //         return xLinearScale(d.poverty);
-    //       })
-    //     .attr("y", function(d) {
-    //         return yLinearScale(d.smokes);
-    //       })
-    //     .text(function(d) {
-    //         return d.abbr;
-    //       })
-    //     .attr("font-family", "sans-serif")
-    //     .attr("font-size", "10px")
-    //     .attr("text-anchor", "middle")
-    //     .attr("fill", "white")
-
-    // Create axes labels
-    //Y Axis
-    // chartGroup.append("text")
-    //   .attr("transform", "rotate(-90)")
-    //   .attr("y", 0 - margin.left + 40)
-    //   .attr("x", 0 - (height / 2))
-    //   .attr("dy", "1em")
-    //   .attr("class", "axisText")
-    //   .text("Smoking (%)");
-    // //X axis
-    // chartGroup.append("text")
-    //   .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
-    //   .attr("class", "axisText")
-    //   .text("Poverty (%)");
-
 }).catch(function(error) {
     console.log(error);
   });
