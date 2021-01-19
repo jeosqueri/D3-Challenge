@@ -74,38 +74,48 @@ function renderAxesY(newYScale, yAxis) {
 
 // function used for updating circles group with a transition to
 // new circles
-function renderCircles(circlesGroup, newXScale, chosenXAxis) {
+function renderCircles(circlesGroup, newXScale, chosenXAxis, newYScale, chosenYAxis) {
 
   circlesGroup.transition()
     .duration(1000)
-    .attr("cx", d => newXScale(d[chosenXAxis]));
-
-  return circlesGroup;
-}
-
-// function renderCirclesLabel(circlesLabel, newXScale, chosenXAxis) {
-
-//   circlesLabel.transition()
-//     .duration(1000)
-//     .attr("cx", d => newXScale(d[chosenXAxis]))
-//     .text(function(d) {
-//       return d.abbr;
-//     });
-
-//   return circlesLabel;
-// }
-
-function renderCirclesY(circlesGroup, newYScale, chosenYAxis) {
-
-  circlesGroup.transition()
-    .duration(1000)
+    .attr("cx", d => newXScale(d[chosenXAxis]))
     .attr("cy", d => newYScale(d[chosenYAxis]));
 
   return circlesGroup;
 }
 
+// function renderText(textGroup, newXScale, newYScale, chosenXAxis, chosenYAxis) {
+//   textGroup.transition()
+//     .duration(1000)
+//     .attr("x", d => newXScale(d[chosenXAxis]))
+//     .attr("y", d => newYScale(d[chosenYAxis]))
+//     .text(function(d) {
+//       return d.abbr;
+//     });
+// }
+
+
+// function renderCirclesY(circlesGroup, newYScale, chosenYAxis) {
+
+//   circlesGroup.transition()
+//     .duration(1000)
+//     .attr("cy", d => newYScale(d[chosenYAxis]));
+
+//   return circlesGroup;
+// }
+
+function renderCirclesLabel(circlesLabels, newXScale, chosenXAxis, newYScale, chosenYAxis) {
+
+  circlesLabels.transition()
+    .duration(1000)
+    .attr("x", d => newXScale(d[chosenXAxis]))
+    .attr("y", d => newYScale(d[chosenYAxis]))
+    .attr("stateText", true);
+
+  return circlesLabels;
+}
 // function used for updating circles group with new tooltip
-function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
+function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, circlesLabels) {
 
   var label;
 
@@ -132,14 +142,14 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
   }
 
   var toolTip = d3.tip()
-    .attr("class", "tooltip")
-    .offset([80, -60])
+    .attr("class", "d3-tip")
+    .offset([90, -90])
     .html(function(d) {
       return (`${d.state}<br>${label}: ${d[chosenXAxis]} <br>${labelY}: ${d[chosenYAxis]}`);
     });
 
   circlesGroup.call(toolTip);
-
+  
   circlesGroup.on("mouseover", function(data) {
     toolTip.show(data);
   })
@@ -147,6 +157,16 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
     .on("mouseout", function(data, index) {
       toolTip.hide(data);
     });
+
+  circlesLabels.call(toolTip);
+
+  circlesLabels.on("mouseover", function(data) {
+      toolTip.show(data);
+    })
+      // onmouseout event
+      .on("mouseout", function(data, index) {
+        toolTip.hide(data);
+      });
 
   return circlesGroup;
 }
@@ -201,9 +221,9 @@ d3.csv("data.csv").then(function(censusData) {
         .attr("opacity", ".5");
 
     //Add circle labels (figure out how to update these)
-    var circleLabels = chartGroup.selectAll(null).data(censusData).enter().append("text");
+    var circlesLabels = chartGroup.selectAll(null).data(censusData).enter().append("text");
 
-    circleLabels
+    circlesLabels
         .attr("x", function(d) {
             return xLinearScale(d[chosenXAxis]);
           })
@@ -280,7 +300,7 @@ d3.csv("data.csv").then(function(censusData) {
           
 
     // updateToolTip function above csv import
-    var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
+    var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, circlesLabels);
 
     // x axis labels event listener
     labelsGroup.selectAll("text")
@@ -302,12 +322,13 @@ d3.csv("data.csv").then(function(censusData) {
         xAxis = renderAxes(xLinearScale, xAxis);
 
         // updates circles with new x values
-        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
 
         // circleLabels = renderCirclesLabel(circleLabels, xLinearScale, chosenXAxis);
-
+        // circlesLabels = renderCirclesLabel(circlesLabels, newXScale, chosenXAxis, newYScale, chosenYAxis);
+        circlesLabels = renderCirclesLabel(circlesLabels, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
         // updates tooltips with new info
-        circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
+        circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, circlesLabels);
 
         // changes classes to change bold text
         if (chosenXAxis === "poverty") {
@@ -349,11 +370,11 @@ d3.csv("data.csv").then(function(censusData) {
     labelsGroupY.selectAll("text")
       .on("click", function() {
       // get value of selection
-      var value = d3.select(this).attr("value");
-      if (value !== chosenYAxis) {
+      var valueY = d3.select(this).attr("value");
+      if (valueY !== chosenYAxis) {
 
         // replaces chosenYAxis with value
-        chosenYAxis = value;
+        chosenYAxis = valueY;
 
         console.log(chosenYAxis)
 
@@ -365,10 +386,12 @@ d3.csv("data.csv").then(function(censusData) {
         yAxis = renderAxesY(yLinearScale, yAxis);
 
         // updates circles with new Y values
-        circlesGroup = renderCirclesY(circlesGroup, yLinearScale, chosenYAxis);
+        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
 
+        // circlesLabels = renderCirclesLabel(circlesLabels, newXScale, chosenXAxis, newYScale, chosenYAxis);
+        circlesLabels = renderCirclesLabel(circlesLabels, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
         // updates tooltips with new info
-        circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
+        circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, circlesLabels);
 
         // changes classes to change bold text
         if (chosenYAxis === "smokes") {
