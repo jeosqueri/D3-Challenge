@@ -1,4 +1,4 @@
-// @TODO: YOUR CODE HERE!
+// Set width and height for SVG object
 var svgWidth = 960;
 var svgHeight = 500;
 
@@ -34,11 +34,15 @@ d3.csv("data.csv").then(function(censusData) {
 
     //Step 2: Create scale functions
     var xAxis = d3.scaleLinear()
-      .domain(d3.extent(censusData, d => d.poverty))
+      .domain([d3.min(censusData, d => d.poverty) * 0.8,
+    d3.max(censusData, d => d.poverty) * 1.2
+    ])
       .range([0, width]);
 
     var yAxis = d3.scaleLinear()
-      .domain([4, d3.max(censusData, d => d.smokes)])
+      .domain([d3.min(censusData, d => d.smokes) * 0.8,
+        d3.max(censusData, d => d.smokes) * 1.2
+      ])
       .range([height, 0]);
 
     // Step 3: Create axis functions
@@ -63,6 +67,7 @@ d3.csv("data.csv").then(function(censusData) {
         .attr("r", "15")
         .attr("fill", "blue")
         .attr("opacity", ".5");
+    
     //Add circle labels
     var circleLabels = chartGroup.selectAll(null).data(censusData).enter().append("text");
 
