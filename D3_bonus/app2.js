@@ -22,7 +22,7 @@ var svg = d3.select("#scatter")
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-// Initial Params
+// Set initial axis params
 var chosenXAxis = "poverty";
 var chosenYAxis = "smokes";
 
@@ -71,8 +71,7 @@ function renderAxesY(newYScale, yAxis) {
   return yAxis;
 }
 
-// function used for updating circles group with a transition to
-// new circles
+// function used for updating circles group with a transition to new circles
 function renderCircles(circlesGroup, newXScale, chosenXAxis, newYScale, chosenYAxis) {
 
   circlesGroup.transition()
@@ -82,6 +81,7 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis, newYScale, chosenYA
 
   return circlesGroup;
 }
+
 //function for updating circle labels
 function renderCirclesLabel(circlesLabels, newXScale, chosenXAxis, newYScale, chosenYAxis) {
 
@@ -93,6 +93,7 @@ function renderCirclesLabel(circlesLabels, newXScale, chosenXAxis, newYScale, ch
 
   return circlesLabels;
 }
+
 // function used for updating circles group with new tooltip
 function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, circlesLabels) {
 
@@ -150,12 +151,12 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, circlesLabels) {
   return circlesGroup;
 }
 
-//Import data
+//Import data using D3
 d3.csv("data.csv").then(function(censusData) {
 
     console.log(censusData);
 
-    //Step 1: Parse data/cast as numbers
+    // Parse data/cast as numbers
     censusData.forEach(function(data) {
         data.poverty = +data.poverty;
         data.age = +data.age;
@@ -165,16 +166,16 @@ d3.csv("data.csv").then(function(censusData) {
         data.healthcare = +data.healthcare;
     });
 
-    //Step 2: Create scale functions
+    // Create scale functions
     var xLinearScale = xScale(censusData, chosenXAxis);
 
     var yLinearScale = yScale(censusData, chosenYAxis);
     
-    // Step 3: Create axis functions
+    // Create axis functions
     var bottomAxis = d3.axisBottom(xLinearScale);
     var leftAxis = d3.axisLeft(yLinearScale);
 
-    // Step 4: Append Axes to the chart
+    // Append Axes to the chart
     var xAxis = chartGroup.append("g")
       .attr("transform", `translate(0, ${height})`)
       .call(bottomAxis);
@@ -182,7 +183,7 @@ d3.csv("data.csv").then(function(censusData) {
     var yAxis = chartGroup.append("g")
       .call(leftAxis);
 
-    // Step 5: Create cirles
+    // Create cirles group
     var circlesGroup = chartGroup.selectAll("circle")
         .data(censusData)
         .enter()
@@ -193,7 +194,7 @@ d3.csv("data.csv").then(function(censusData) {
         .classed("stateCircle", true)
         .attr("opacity", ".5");
 
-    //Create circle labels variable/add state abb to circles
+    // Create circle labels variable/add state abbr to circles
     var circlesLabels = chartGroup.selectAll(null).data(censusData).enter().append("text");
 
     circlesLabels
@@ -265,10 +266,11 @@ d3.csv("data.csv").then(function(censusData) {
       .text("Healthcare (%)")
           
 
-    // updateToolTip function above csv import
+    // updateToolTip function
     var circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup, circlesLabels);
 
-    // x axis labels event listener
+    // X AXIS labels event listeners
+    // =============================
     labelsGroup.selectAll("text")
       .on("click", function() {
       // get value of selection
@@ -280,7 +282,7 @@ d3.csv("data.csv").then(function(censusData) {
 
         console.log(chosenXAxis)
 
-        // functions here found above csv import
+        // call functions created above
         // updates x scale for new data
         xLinearScale = xScale(censusData, chosenXAxis);
 
@@ -332,7 +334,8 @@ d3.csv("data.csv").then(function(censusData) {
         }
     }
   });
-    // Y axis labels event listener
+    // Y AXIS labels event listeners
+    // =============================
     labelsGroupY.selectAll("text")
       .on("click", function() {
       // get value of selection
@@ -344,7 +347,7 @@ d3.csv("data.csv").then(function(censusData) {
 
         console.log(chosenYAxis)
 
-        // functions here found above csv import
+        // call functions created above
         // updates Y scale for new data
         yLinearScale = yScale(censusData, chosenYAxis);
 
