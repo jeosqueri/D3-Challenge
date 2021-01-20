@@ -1,4 +1,4 @@
-# D3-Challenge- Health Risks in the United States
+# D3-Challenge: Health Risks in the United States
 
 Assignment Overview
 -------

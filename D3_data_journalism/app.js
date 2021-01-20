@@ -26,13 +26,13 @@ d3.csv("data.csv").then(function(censusData) {
 
     console.log(censusData);
 
-    //Step 1: Parse data/cast as numbers
+    // Parse data/cast as numbers
     censusData.forEach(function(data) {
         data.poverty = +data.poverty;
         data.smokes = +data.smokes;
     });
 
-    //Step 2: Create scale functions
+    // Create scale functions
     var xAxis = d3.scaleLinear()
       .domain([d3.min(censusData, d => d.poverty) * 0.8,
     d3.max(censusData, d => d.poverty) * 1.2
@@ -45,11 +45,11 @@ d3.csv("data.csv").then(function(censusData) {
       ])
       .range([height, 0]);
 
-    // Step 3: Create axis functions
+    // Create axis functions
     var bottomAxis = d3.axisBottom(xAxis);
     var leftAxis = d3.axisLeft(yAxis);
 
-    // Step 4: Append Axes to the chart
+    // Append Axes to the chart
     chartGroup.append("g")
       .attr("transform", `translate(0, ${height})`)
       .call(bottomAxis);
@@ -57,7 +57,7 @@ d3.csv("data.csv").then(function(censusData) {
     chartGroup.append("g")
       .call(leftAxis);
 
-    // Step 5: Create cirles
+    // Create cirles
     var circlesGroup = chartGroup.selectAll("circle")
         .data(censusData)
         .enter()
@@ -68,7 +68,7 @@ d3.csv("data.csv").then(function(censusData) {
         .attr("fill", "blue")
         .attr("opacity", ".5");
     
-    //Add circle labels
+    // Add circle labels
     var circleLabels = chartGroup.selectAll(null).data(censusData).enter().append("text");
 
     circleLabels
@@ -87,7 +87,7 @@ d3.csv("data.csv").then(function(censusData) {
         .attr("fill", "white")
 
     // Create axes labels
-    //Y Axis
+    // Y Axis
     chartGroup.append("text")
       .attr("transform", "rotate(-90)")
       .attr("y", 0 - margin.left + 40)
@@ -95,7 +95,7 @@ d3.csv("data.csv").then(function(censusData) {
       .attr("dy", "1em")
       .attr("class", "axisText")
       .text("Smoking (%)");
-    //X axis
+    // X axis
     chartGroup.append("text")
       .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
       .attr("class", "axisText")
