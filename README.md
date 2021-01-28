@@ -1,15 +1,16 @@
-# D3-Challenge: Health Risks in the United States
+# Health Risks in the United States
+## *An analysis of 2014 Census Data for all 50 states*
 
-Assignment Overview
+Project Overview
 -------
-The D3-Bonus section [is deployed here](https://jeosqueri.github.io/D3-Challenge/).
-This is a more **thorough presentation and analysis of the data**. Files for this section are in the root directory. I created an interactive scatter plot with multiple axes that shows the relationship between multiple health risks (obesity, smoking, and lack of access to healthcare) and demographic factors (poverty rate, median household income, and median age). This scatter plot also features an interactive tooltip, which displays the information for each state based on the chosen x and y axis.
+The website for this project [is deployed here](https://jeosqueri.github.io/D3-Challenge/).
+Files for this section are in the root directory. Using D3, I created an interactive scatter plot with multiple axes that shows the relationship between multiple health risks (obesity, smoking, and lack of access to healthcare) and demographic factors (poverty rate, median household income, and median age). This scatter plot also features an interactive tooltip, which displays the information for each state based on the chosen x and y axis.
 
 *Relationship between poverty rates and obesity rates*
 
 ![Screen Shot 2021-01-20 at 3 34 41 PM](https://user-images.githubusercontent.com/69160361/105249293-2067cd00-5b35-11eb-981f-3b4fa39c4b66.png)
 
-The folder **'D3-Data-Journalism'** includes the code for the required part of the assignment, where I created a basic scatter plot to represent the correlation between poverty rates and smoking rates in the United States.
+The folder **'D3-Data-Journalism'** includes the code for a basic, static scatter plot to represent the correlation between poverty rates and smoking rates in the United States.
 
 *Relationship between poverty rates and smoking rates*
 
