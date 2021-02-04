@@ -3,7 +3,7 @@
 
 Project Overview
 -------
-The website for this project [is deployed here](https://jeosqueri.github.io/D3-Challenge/).
+The website for this project [is deployed here](https://jeosqueri.github.io/US-Health-Risks/).
 Files for this section are in the root directory. Using D3, I created an interactive scatter plot with multiple axes that shows the relationship between multiple health risks (obesity, smoking, and lack of access to healthcare) and demographic factors (poverty rate, median household income, and median age). This scatter plot also features an interactive tooltip, which displays the information for each state based on the chosen x and y axis.
 
 *Relationship between poverty rates and obesity rates*
